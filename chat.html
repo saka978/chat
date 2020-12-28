@@ -1,0 +1,234 @@
+<html>
+<head>
+  <title> Webbus Help Desk</title>
+  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+  <div id="titleName">
+    <p id="p">Webbus Help Desk </p>
+  </div>
+  <br>
+  <br>
+  <div id="holder">
+    <form id="messageForm">
+      <input type="text" id="messageInput" placeholder="Type..." />
+      <button type="submit" id="btn" onclick="hidel()"> Send </button>
+    </form>
+    <div class="chat" id="chat" style="overflow-y:scroll; height:450px;">
+      <div id="usernameLabel"> Test</div>
+      <div id="messageBox">
+      </div>
+    </div>
+  </div>
+  <button type="submit" id="showAllButton" onclick="showl()"> Show All </button>
+  <div id="people" style="overflow-y:scroll; height:450px;">
+</body>
+
+<script>
+  var userCount = 1;
+  var currentUser
+  var socket = io.connect();
+  $(function () {
+    var $people = $("#people");
+    var $messageForm = $("#messageForm");
+    var $messageInput = $("#messageInput");
+    var $chat = $("#chat");
+    var name = document.URL.split('/?')[1].split('&')[0].split('=')[1];
+
+    $messageForm.submit(function (e) {
+      e.preventDefault();
+      socket.emit("send message", $messageInput.val(),name);
+      $messageInput.val("");
+    });
+
+    socket.on("new message", function (data, sender) {
+      if (data.msg.length > 0) {
+        $chat.append('<br>' + '<div id="chatCircle"> ' +name+ '<textarea id="t" readonly>' + data.msg + '</textarea>' + ' </div>' + '<br>');
+      }
+    });
+
+    socket.on("new user", function (data) {
+      $people.append('<br>' + '<div id="userCircle"> ' +'<div id="userName" >'+ name + '</div>' + ' </div>' + '<br>');
+      userCount++;
+    });
+
+    socket.on("user left", function (data) {
+      $("#userCircle").remove();
+    });
+  });
+
+  showlog = false;
+  window.setInterval(function () {
+    if (showlog == false) {
+      var chat = document.getElementById("chat");
+      chat.scrollTop = chat.scrollHeight;
+
+      var people = document.getElementById("people");
+      people.scrollTop = people.scrollHeight;
+    }
+  }, 4);
+
+  function showl() {
+    showlog = true;
+
+  }
+  function hidel() {
+    var chat = document.getElementById("chat");
+    chat.scrollTop = chat.scrollHeight;
+    var people = document.getElementById("people");
+    people.scrollTop = people.scrollHeight;
+    showlog = false;
+  }
+</script>
+
+<style>
+  body {
+    background-color: #635d5d;
+  }
+
+  #p {
+    margin-top: 9px;
+  }
+
+  #usernameLabel{
+    font-family: verdana;
+    font-weight: bold;
+  }
+
+  #people {
+
+    background-color: #ffffff;
+    width: 250px;
+    height: 440px;
+    margin-left: 767px;
+    margin-top: -462px;
+    border: 6px solid rgb(0, 0, 0);
+  }
+
+  #pr {
+    font-size: 12px;
+    margin-top: -34px;
+    margin-left: 82px;
+  }
+
+  #titleName {
+    background-color: #201f1f;
+    font-family: verdana;
+    color: white;
+    font-size: 30px;
+    text-align: center;
+    border: 2px solid white;
+    border-radius: 15px;
+    width: 190px;
+    height: 100px;
+  }
+
+  #btn {
+    background-color: white;
+    font-size: 15px;
+    font-family: Verdana;
+    color: black;
+    width: 56px;
+    height: 51px;
+    text-align: center;
+    margin-left: 0px;
+    border-radius: 10px;
+    outline: none;
+    border: 2px solid #000000;
+
+  }
+
+  #showAllButton {
+    background-color: white;
+    font-size: 15px;
+    font-family: Verdana;
+    color: black;
+    width: 100px;
+    height: 40px;
+    text-align: center;
+    margin-left: 1040px;
+    margin-top: -40px;
+    border-radius: 10px;
+    outline: none;
+    border: 2px solid #000000;
+
+  }
+
+  #messageInput {
+    margin-left: 532px;
+    text-align: center;
+    border-radius: 10px;
+    outline: none;
+    shadow: none;
+    font-size: 15px;
+    font-family: Verdana;
+    color: black;
+    width: 250px;
+    height: 50px;
+  }
+
+
+  #t {
+    text-align: left;
+    font-size: 15px;
+    font-family: Verdana;
+    color: black;
+    border: 2px solid #000000;
+    margin-top: -5px;
+    margin-left: 40px;
+    width: 300px;
+    height: 90px;
+    background-color: white;
+    border-radius: 12px;
+    resize: none;
+    outline: none;
+
+  }
+
+  #chat {
+    border: 6px solid rgb(0, 0, 0);
+    width: 459px;
+    background-color: #ffffff;
+    margin: auto;
+    border-radius: 10px;
+    margin-left: 300px;
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  #chatCircle {
+    width: 10px;
+    height: 10px;
+    margin-bottom: 50px;
+    border-radius: 100px;
+    border: 5px solid white;
+    margin-left: 25px;
+    background-color: #000000;
+  }
+
+  #userCircle {
+    width: 10px;
+    height: 10px;
+    border-radius: 100px;
+    border: 3px solid white;
+    margin-left: 25px;
+    background-color: #000000;
+  }
+
+  #userName {
+    width: 20;
+    height: 20;
+    color: #000000;
+    text-align: left;
+    font-size: 15px;
+    font-family: Verdana;
+    margin-left: 20px;
+    margin-top: -5px;
+  }
+</style>
+
+</html>
