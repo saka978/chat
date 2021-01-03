@@ -35,8 +35,6 @@
     var $messageForm = $("#messageForm");
     var $messageInput = $("#messageInput");
     var $chat = $("#chat");
-    var userCount = 1;
-    var name;
 
     $messageForm.submit(function (e) {
       e.preventDefault();
@@ -51,8 +49,7 @@
     });
 
     socket.on("new user", function (data) {
-      name = "User" + userCount
-      $people.append('<br>' + '<div id="userCircle"> ' +'<div id="userName" >'+ name + '</div>' + ' </div>' + '<br>');
+      $people.append('<br>' + '<div id="userCircle"> ' +'<div id="userName" >User</div>' + ' </div>' + '<br>');
       userCount++;
     });
 
