@@ -6,7 +6,7 @@ var io = require("socket.io")(server);
 var users = [];
 var connections = [];
 
-server.listen("193.219.91.103",80);
+server.listen(2020,"0.0.0.0");
 console.log("Chat is up and running");
 
 app.get("/", function (req, res) {
@@ -27,7 +27,6 @@ io.sockets.on("connection", function (socket) {
 	});
 
 	socket.on("send message", function (data, name) {
-		console.log(data);
-		io.sockets.emit("new message", { msg: data, sender: name});
+		io.sockets.emit("new message", { msg: data});
 	});
 });
