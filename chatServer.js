@@ -6,7 +6,7 @@ var io = require("socket.io")(server);
 var users = [];
 var connections = [];
 
-server.listen(process.env.PORT || 2020);
+server.listen("193.219.91.103",80);
 console.log("Chat is up and running");
 
 app.get("/", function (req, res) {
